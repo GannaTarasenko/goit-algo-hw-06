@@ -1,66 +1,61 @@
 from collections import UserDict
 '''
-Сутності:
 
-    
-    Name: Клас для зберігання імені контакту. Обов'язкове поле.
     Phone: Клас для зберігання номера телефону. Має валідацію формату (10 цифр).
     Record: Клас для зберігання інформації про контакт, включаючи ім'я та список телефонів.
     AddressBook: Клас для зберігання та управління записами.
 '''
-class Field: #
-    def __init__(self, value): # field = Field('Hello') | field = Field(1) | field = Field(24.09)
+class Field: #Базовий клас для полів запису.
+    def __init__(self, value):
         self.value = value
 
     def __str__(self):
-        return str(self.value) # 'Hello' | '1' | '24.09'
+        return str(self.value)
     
     def __repr__(self):
-        return str(self.value) # 'Hello' | '1' | '24.09'
+        return str(self.value)
     
 
-class Name(Field):
+class Name(Field): #Клас для зберігання імені контакту. Обов'язкове поле.
     def __init__(self, name=None):
         if name is None:
             raise ValueError
         super().__init__(name) # self.value = name
 
 
-class Phone(Field):
-    def __init__(self, phone): # '12345' -, '1234567890' +, '12345678901' -, +38012345678901-
-        # phone = str(phone)
-        if len(phone) != 10:
-            raise ValueError
-        super().__init__(phone)
+class Phone(Field): #Клас для зберігання номера телефону. Має валідацію формату (10 цифр).
+    def __init__(self, phone): 
+        if len(phone) != 10: #лише 10 знаків 
+            raise ValueError #в іншому випадку помилка
+        super().__init__(phone) # self.value = phone
 
 
-class Record:
-    def __init__(self, name): # record = Record('Ihor')
+class Record: #Клас для зберігання інформації про контакт, включаючи ім'я та список телефонів.
+    def __init__(self, name): # record = Record('Hanna')
         self.name = Name(name)
         self.phones = list()
 
-    def add_phone(self, phone): # record.add_phone('1234567890')
-        for p in self.phones: # [Phone('1234567890'), Phone('0987654321')] 
-            if p.value == phone: # Phone('1234567890') == '1234567890' -> Class Phone, str '123' != 123
+    def add_phone(self, phone): #додавання
+        for p in self.phones:
+            if p.value == phone: #'123' != 123
                 return
         self.phones.append(Phone(phone))
 
-    def remove_phone(self, phone): # record.remove_phone('1234567890')
-        # self.phones.remove(phone) # Phone('1234567890') == '1234567890'
-        for p in self.phones: # [Phone('1234567890'), Phone('0987654321')] 
-            if p.value == phone: # Phone('1234567890') == '1234567890' -> Class Phone, str '123' != 123
+    def remove_phone(self, phone): #видалення
+        for p in self.phones:
+            if p.value == phone: #'123' != 123
                 self.phones.remove(p)
                 return
         raise ValueError
     
-    def edit_phone(self, old_phone, new_phone):
+    def edit_phone(self, old_phone, new_phone): #зміна
         for p in self.phones:
             if p.value == old_phone:
                 p.value = new_phone
                 return
         raise ValueError
 
-    def find_phone(self, phone): # record.find_phone('1234567890') -> Phone('1234567890')
+    def find_phone(self, phone): #пошук
         for p in self.phones:
             if p.value == phone:
                 return p
@@ -72,30 +67,27 @@ class Record:
     def __repr__(self):
         return f'Record(Name: {self.name} Phones: {self.phones})'
 
-class AddressBook(UserDict): # addressBook = AddressBook()
-    def add_record(self, record: Record): # record = Record('Ihor') addressBook.add_record(record)
+class AddressBook(UserDict): #Клас для зберігання та управління записами.
+    def add_record(self, record: Record): #додавання
         name = record.name.value
-        self.data.update({name: record}) # {'Ihor': Record('Ihor')}
+        self.data.update({name: record}) # {'Hanna': Record('Hanna')}
 
-    def add_record_alternative(self, record: Record): # record = Record('Ihor') addressBook.add_record(record)
-        name = record.name.value
-        self.update({name: record}) # {'Ihor': Record('Ihor')}
-
-    def find(self, name): # {'Ihor': Record('Ihor')}
-        return self.get(name) # Record('Ihor')
+    def find(self, name): #пошук
+        return self.get(name) # Record('Hanna')
     
-    def delete(self, name):
+    def delete(self, name): #видалення
         del self[name]
       
-john = Record('John')
-john.add_phone('1234567890')
+vova = Record('Vova')
+vova.add_phone('9999999991')
 
 addressBook = AddressBook()
-addressBook.add_record(john)
+addressBook.add_record(vova)
 
-jane = Record('Jane')
-jane.add_phone('1234567890')
+hanna = Record('Hanna')
+hanna.add_phone('8888888888')
 
-addressBook.add_record(jane)
+addressBook.add_record(hanna)
 
-print(addressBook.find('John'))
+print(addressBook.find('Vova'))
+print(addressBook.find('Hanna'))
